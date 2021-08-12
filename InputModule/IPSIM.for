@@ -890,18 +890,18 @@ C-----------------------------------------------------------------------
 C     FORMAT Strings
 C-----------------------------------------------------------------------
 
-  55  FORMAT (I3,11X,2(1X,I5),5X,A1,1X,I5,1X,I5,1X,A25,1X,A8)
-  60  FORMAT (I3,11X,9(5X,A1))
-  61  FORMAT (I3,11X,7(5X,A1),5X,I1,5(5X,A1))
-  65  FORMAT (I3,11X,3(5X,A1),4X,I2,9(5X,A1),
+  55  FORMAT (I8,11X,2(1X,I5),5X,A1,1X,I8,1X,I5,1X,A25,1X,A8)
+  60  FORMAT (I8,11X,9(5X,A1))
+  61  FORMAT (I8,11X,7(5X,A1),5X,I1,5(5X,A1))
+  65  FORMAT (I8,11X,3(5X,A1),4X,I2,9(5X,A1),
      &5X, A1)   ! VSH
-  66  FORMAT (I3,11X,2(1X,I5),5(1X,F5.0))
-  67  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0)
-  68  FORMAT (I3,11X,1X,F5.0,1X,I5,1X,F5.0)
+  66  FORMAT (I8,11X,2(1X,I8),5(1X,F5.0))
+  67  FORMAT (I8,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0)
+  68  FORMAT (I8,11X,1X,F5.0,1X,I5,1X,F5.0)
 !69  FORMAT (I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,I5,
 !    &        1X,I5,1x,F5.0, 2(1x, F5.3))
-  69  FORMAT(I3,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,F6.0)
-  70  FORMAT (3X,I2)
+  69  FORMAT(I8,11X,3(1X,F5.0),2(1X,A5),1X,F5.0,1X,F5.0,1X,F5.0,1X,F6.0)
+  70  FORMAT (8X,I2)
 
       END SUBROUTINE IPSIM
 

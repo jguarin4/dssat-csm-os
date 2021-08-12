@@ -78,19 +78,21 @@ C=======================================================================
       CHARACTER* 1 LINE(80),BLANK, RNMODE
       CHARACTER* 1 WMODI,ANS
       CHARACTER* 2 CROP
-      CHARACTER* 3 PROCOD,ALN(13),ALLN, PROCODG, PROCODC, PROCODW
+      CHARACTER* 3 PROCOD, PROCODG, PROCODC, PROCODW
       CHARACTER* 4 WSTA1
       CHARACTER* 6 VARNO,ERRKEY,FINDCH
       CHARACTER* 7 FILELS
       CHARACTER* 8 FILES_a, FILES_b, MODEL, MODELARG, FILEW4
+      CHARACTER* 8 ALLN, ALN(13)
       CHARACTER*10 SLNO
       CHARACTER*12 NAMEF, FILEX, FILE_CHECK
       CHARACTER*25 TITLET
       CHARACTER*42 CHEXTR(NAPPL)
       CHARACTER*78 MSG(4)
-      CHARACTER*80 CHARTEST,PATHEX
+      CHARACTER*80 PATHEX
       CHARACTER*92 FILEX_P,FILETMP
       CHARACTER*120 FILECTL, WTHSTR
+      CHARACTER*256 CHARTEST
 
       INTEGER I,L,NLOOP,LINF,ISECT,LUNEXP,LUNLST
       INTEGER LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES,LNCHE,LNCU
@@ -277,7 +279,7 @@ C-----------------------------------------------------------------------
          CALL IGNORE (LUNEXP,LINEXP,ISECT,CHARTEST)
          IF (ISECT .EQ. 1) THEN
             READ (CHARTEST,54,IOSTAT=ERRNUM) (ALN(L),L=1,13)
-   54       FORMAT (34X,13A3)
+   54       FORMAT (35X,13A8)
             DO L=1,13
               ALLN = ALN(L)
               IF (ALLN(3:3) .EQ. '?') THEN
@@ -373,7 +375,7 @@ C-----------------------------------------------------------------------
       CALL IGNORE2(LUNEXP,LINEXP,ISECT,CHARTEST)
       SimLevel = .TRUE.
       IF (ISECT == 3) THEN
-        IF (CHARTEST(72:73) /= 'SM') THEN
+        IF (CHARTEST(137:138) /= 'SM') THEN
           SimLevel = .FALSE.
         ENDIF
       ENDIF
@@ -855,8 +857,8 @@ C-----------------------------------------------------------------------
 C     FORMAT Strings
 C-----------------------------------------------------------------------
 
-   55 FORMAT (I3,I1,2(1X,I1),1X,A25,14I3)
-   56 FORMAT (2I2,2(1X,I1),1X,A25,14I3)
+   55 FORMAT (I7,1X,I1,2(1X,I1),1X,A25,14I8)
+   56 FORMAT (2I2,2(1X,I1),1X,A25,14I8)
 
    75 FORMAT (A4,I2.2,A6)
    76 FORMAT (3A4)
@@ -1053,7 +1055,7 @@ C     FORMAT Strings
 C-----------------------------------------------------------------------
 
 C 60 FORMAT (I3,I5,1X,I5,2(1X,F5.0),2(5X,A1),8(1X,F5.0),I6,F6.0,2I6)
- 60   FORMAT (I3,I5,1X,I5,2(F6.0),2(5X,A1),8(1X,F5.0),I6,F6.0,2I6)
+ 60   FORMAT (I7,1X,I8,1X,I8,2(F6.0),2(5X,A1),8(1X,F5.0),I6,F6.0,2I6)
 
       END SUBROUTINE IPPLNT_Inp
 
@@ -1102,7 +1104,7 @@ C=======================================================================
       CHARACTER*10 SLNO
       CHARACTER*12 FILEX
       CHARACTER*15 CXCRD, CYCRD
-      CHARACTER*92 CHARTEST
+      CHARACTER*256 CHARTEST
 
       INTEGER LUNEXP,LNFLD,LN,LINEXP,ISECT,IFIND,ERRNUM,I, FHDUR
 
@@ -1219,11 +1221,11 @@ C-----------------------------------------------------------------------
 C     FORMAT Strings
 C-----------------------------------------------------------------------
 
- 60   FORMAT (I3,A8,1X,2A4,1X,F5.0,1X,F5.0,1X,A5,2(1X,F5.0),
+ 60   FORMAT (I7,1X,A8,1X,2A4,1X,F5.0,1X,F5.0,1X,A5,2(1X,F5.0),
      &         2(1X,A5),1X,F5.0,1X,A10)
 !     chp 7/26/2006
 ! 80   FORMAT (I3,2(F15.0,1X),F9.0,1X,F17.0,3(1X,F5.0))
- 80   FORMAT (I3,2(A15,1X),A9,1X,F17.0,3(1X,F5.0),1X,A5,I6)
+ 80   FORMAT (I7,1X,2(A15,1X),A9,1X,F17.0,3(1X,F5.0),1X,A5,I6)
 
       END SUBROUTINE IPFLD
 

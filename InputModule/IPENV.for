@@ -91,7 +91,7 @@ C
          NEV = 1
    20    CALL IGNORE (LUNEXP,LINEXP,FOUND,LINE)
          IF (FOUND .EQ. 1) THEN
-            READ (LINE,'(I2)',IOSTAT=ERRNUM) LN
+            READ (LINE,'(I8)',IOSTAT=ERRNUM) LN
             IF (ERRNUM.NE.0) CALL ERROR (ERRKEY,ERRNUM,FILEX,LINEXP)
 
             IF (LN .EQ. LNENV) THEN
@@ -136,6 +136,6 @@ C-----------------------------------------------------------------------
 C     Format Strings
 C-----------------------------------------------------------------------
 
- 1000 FORMAT (I3,I5,5(1X,A1,F4.0),1X,A1,F4.0,2(1X,A1,F4.0))
+ 1000 FORMAT (I8,I7,5(1X,A1,F4.0),1X,A1,F4.0,2(1X,A1,F4.0))
 
       END SUBROUTINE IPENV

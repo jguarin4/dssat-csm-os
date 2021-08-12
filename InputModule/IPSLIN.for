@@ -41,7 +41,7 @@ C=======================================================================
       CHARACTER*6  ERRKEY,FINDCH
       CHARACTER*10 PEDON,SLNO
       CHARACTER*12 FILEX
-      CHARACTER*80 CHARTEST
+      CHARACTER*256 CHARTEST
 	CHARACTER*92 FILEX_P
 
       INTEGER      L,LN,LUNEXP,NLAYRI,NLAYR,LINEXP,ISECT,LNIC,FWY1P,
@@ -191,8 +191,8 @@ C-----------------------------------------------------------------------
 C     Format Strings
 C-----------------------------------------------------------------------
 
- 55   FORMAT (I3,3X,A2,1X,I5,10(1X,F5.0))
- 60   FORMAT (I3,F5.0,3(1X,F5.0))
+ 55   FORMAT (I7,2X,A3,1X,I8,10(1X,F5.0))
+ 60   FORMAT (I7,F5.0,3(1X,F5.0))
  65   FORMAT (26X,3F6.0)
 
       END SUBROUTINE IPSLIN
