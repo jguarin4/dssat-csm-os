@@ -496,11 +496,11 @@ C
      &               IEPT,IOFF,IAME,AIRAMT,EFFIRR,AVWAT, IFREQ
                IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILEX,LINEXP)
 
-               READ(CHARTEST,'(57x,A5)') TEXT     ! Read value of AVWAT in text to check if blank or missing
+               READ(CHARTEST,'(62x,A5)') TEXT     ! Read value of AVWAT in text to check if blank or missing
                CHARLEN = LEN_TRIM(TEXT)
                IF (CHARLEN==0) AVWAT = -99.       ! If TXAVWAT blank or missing set AVWAT -99 (for compatability with old files)
 
-               READ(CHARTEST,'(63x,A5)') TEXT     ! Read value of IFREQ in text to check if blank or missing
+               READ(CHARTEST,'(68x,A5)') TEXT     ! Read value of IFREQ in text to check if blank or missing
                CHARLEN = LEN_TRIM(TEXT)
                IF (CHARLEN==0) IFREQ = 0.0        ! If TXFREQ blank or missing set IFREQ = 0 (for compatability with old files)
 
