@@ -38,10 +38,11 @@
       CHARACTER*8   WSTA,FILEW4,FILEX
       CHARACTER*12  FILEW,NAMEF, LastFileW
       CHARACTER*78  MSG(4)
-      CHARACTER*80  PATHWT,PATHEX,CHARTEST
+      CHARACTER*80  PATHWT,PATHEX
       CHARACTER*92  FILEWW,FILETMP
       CHARACTER*102 DSSATP
       CHARACTER*255 LINE
+      CHARACTER*256 CHARTEST
 
       LOGICAL       FEXIST,SimLevel
       
@@ -79,7 +80,7 @@
         IF(IFIND .NE. 0) THEN
           
           !FO - Find the specific section header
-          FINDH ='L ID_'
+          FINDH ='L    '
           CALL HFIND(LUNEXP,FINDH,LINEXP,IFIND)
           IF(IFIND .EQ. 1) THEN
             !FO - Loop through good lines to find and read the weather station
@@ -87,7 +88,7 @@
               CALL IGNORE2(LUNEXP,LINEXP,ISECT,CHARTEST)
               
               IF(ISECT .EQ. 1) THEN
-                READ (CHARTEST,'(I3,9X,A8)', IOSTAT=ERRNUM) TLNFLD,WSTA
+                READ (CHARTEST,'(I7,10X,A8)', IOSTAT=ERRNUM) TLNFLD,WSTA
                 IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,4,FILEX,LINEXP)
                 IF (WSTA(1:1) .EQ. BLANK) CALL ERROR (ERRKEY,3,FILEX,LINEXP)
               ELSE
@@ -134,12 +135,12 @@
         IF(IFIND .NE. 0) THEN
           DO
             !FO - Find the specific header to search for SDATE
-            FINDH ='N GEN'
+            FINDH ='N    '
             CALL HFIND(LUNEXP,FINDH,LINEXP,IFIND)
             IF(IFIND .EQ. 1) THEN
               CALL IGNORE2(LUNEXP,LINEXP,ISECT,CHARTEST)      
               IF(ISECT .EQ. 1) THEN
-                READ (CHARTEST,'(I2,30X,I6)', IOSTAT=ERRNUM) TLNSIM,SDATE
+                READ (CHARTEST,'(I8,31X,I7)', IOSTAT=ERRNUM) TLNSIM,SDATE
                 IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,8,FILEX,LNUM)           
               ELSE
                 CALL ERROR (ERRKEY,7,FILEX,LNUM)
@@ -150,13 +151,13 @@
             ENDIF
             
             !FO - Find the specific header to search for WTHER
-            FINDH ='N MET'
+            FINDH ='N    '
             CALL HFIND(LUNEXP,FINDH,LINEXP,IFIND)
             IF(IFIND .EQ. 1) THEN
               
               CALL IGNORE2(LUNEXP,LINEXP,ISECT,CHARTEST)  
               IF(ISECT .EQ. 1) THEN
-                READ (CHARTEST,'(I2,17X,A1)', IOSTAT=ERRNUM) TLNSIM,WTHER
+                READ (CHARTEST,'(I8,16X,A1)', IOSTAT=ERRNUM) TLNSIM,WTHER
                 IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,11,FILEX,LNUM)
                 IF (WTHER .EQ. BLANK) CALL ERROR (ERRKEY,10,FILEX,LINEXP)            
               ELSE
@@ -187,14 +188,14 @@
         IF(IFIND .NE. 0) THEN
           
           !FO - Find the specific header to search for PDATE
-          FINDH ='P PDA'
+          FINDH ='P    '
           CALL HFIND(LUNEXP,FINDH,LINEXP,IFIND)
           IF(IFIND .EQ. 1) THEN
             DO
               CALL IGNORE2(LUNEXP,LINEXP,ISECT,CHARTEST)      
               IF(ISECT .EQ. 1) THEN
                 
-                READ (CHARTEST,'(I2,I6)', IOSTAT=ERRNUM) TLNPLT,PDATE
+                READ (CHARTEST,'(I8,I8)', IOSTAT=ERRNUM) TLNPLT,PDATE
                 IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,14,FILEX,LNUM)            
                 
               ELSE
