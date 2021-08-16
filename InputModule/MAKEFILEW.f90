@@ -80,7 +80,7 @@
         IF(IFIND .NE. 0) THEN
           
           !FO - Find the specific section header
-          FINDH ='L    '
+          FINDH ='L ID_'
           CALL HFIND(LUNEXP,FINDH,LINEXP,IFIND)
           IF(IFIND .EQ. 1) THEN
             !FO - Loop through good lines to find and read the weather station
@@ -135,7 +135,7 @@
         IF(IFIND .NE. 0) THEN
           DO
             !FO - Find the specific header to search for SDATE
-            FINDH ='N    '
+            FINDH ='N GEN'
             CALL HFIND(LUNEXP,FINDH,LINEXP,IFIND)
             IF(IFIND .EQ. 1) THEN
               CALL IGNORE2(LUNEXP,LINEXP,ISECT,CHARTEST)      
@@ -151,7 +151,7 @@
             ENDIF
             
             !FO - Find the specific header to search for WTHER
-            FINDH ='N    '
+            FINDH ='N MET'
             CALL HFIND(LUNEXP,FINDH,LINEXP,IFIND)
             IF(IFIND .EQ. 1) THEN
               
@@ -188,7 +188,7 @@
         IF(IFIND .NE. 0) THEN
           
           !FO - Find the specific header to search for PDATE
-          FINDH ='P    '
+          FINDH ='P PDA'
           CALL HFIND(LUNEXP,FINDH,LINEXP,IFIND)
           IF(IFIND .EQ. 1) THEN
             DO
