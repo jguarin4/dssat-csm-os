@@ -23,7 +23,7 @@
 ! TCSLP  0.0                       !Turn off Canopy temperature modification slop; when TCSLP is turn-on comment this line and when TCSLP is turn-off, remove the comment from this line
   TCINT  6.0                       !Canopy temperature modification intercept; To turn-off, comment this line and to turn-on remove comment from this line
 ! TCINT  0.0                       !Turn off Canopy temperature modification intercept; no comment on this line means the TCINT is turn-on and visa-vis
-  TTHLD -30.0                      ! Minimum temperature (Tmin) threshold for frost effect (frost effect starts when Tmin<-5)
+  TTHLD -98.0                      ! Minimum temperature (Tmin) threshold for frost effect (frost effect starts when Tmin<-5)
 ! To turn-on frost effect set the TTHLD to -5 or below -5 depending on your Tmin threshold you are interested in to see the effect
 ! To tun-off frost effect, set the TTHLD to a value beyound the range of minimum Tmin (e.g.-30 oC)
   FRSTF  0.1                       ! Frost Factor's factor- a factor for 10% leaf frosted for each OC dcrease in minimum temeperture
