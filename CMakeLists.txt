@@ -4,7 +4,7 @@
 # Define the project and the dependencies that it has
 ##########################################################################################
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.5)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
    message(FATAL_ERROR "DSSAT in-source builds are not permitted. \nMake a separate folder"
@@ -22,7 +22,7 @@ PROJECT(DSSAT-CSM Fortran)
 SET(MAJOR 4)
 SET(MINOR 8)
 SET(MODEL 0)
-SET(BUILD 12)
+SET(BUILD 27)
 
 # Get the current working branch
 execute_process(
@@ -397,7 +397,7 @@ set(
         "Plant/CSYCA-Cassava/YCA_Out_CrpSim.f90"
         "Plant/CSYCA-Cassava/YCA_Out_Error.f90"
         "Plant/CSYCA-Cassava/YCA_Out_Eval.f90"
-		"Plant/CSYCA-Cassava/YCA_Out_FreshWt.f90"
+        "Plant/CSYCA-Cassava/YCA_Out_FreshWt.f90"
         "Plant/CSYCA-Cassava/YCA_Out_LfTier.f90"
         "Plant/CSYCA-Cassava/YCA_Out_ModFail.f90"
         "Plant/CSYCA-Cassava/YCA_Out_PlantSum.f90"
@@ -504,12 +504,22 @@ set(
         "Plant/NWHEAT/WH_ROOTS.for"
         "Plant/NWHEAT/WH_SW_SUBS.for"
         "Plant/NWHEAT/WH_temp.for"
+        "Plant/OilCrop-Sunflower/SU_CERES.for"
+        "Plant/OilCrop-Sunflower/SU_GROSUB.for"
+        "Plant/OilCrop-Sunflower/SU_KUPTAK.for"
+        "Plant/OilCrop-Sunflower/SU_NFACTO.for"
+        "Plant/OilCrop-Sunflower/SU_NUPTAK.for"
+        "Plant/OilCrop-Sunflower/SU_OPGROW.for"
+        "Plant/OilCrop-Sunflower/SU_OPHARV.for"
+        "Plant/OilCrop-Sunflower/SU_OPNIT.for"
+        "Plant/OilCrop-Sunflower/SU_PHENOL.for"
+        "Plant/OilCrop-Sunflower/SU_ROOTS.for"
         "Plant/SAMUCA-Sugarcane/SC_admit1.f90"
         "Plant/SAMUCA-Sugarcane/SC_astro.f90"
         "Plant/SAMUCA-Sugarcane/SC_Det_outputs.f90"
         "Plant/SAMUCA-Sugarcane/SC_find_inp_sam.for"
         "Plant/SAMUCA-Sugarcane/SC_functions.f90"
-		"Plant/SAMUCA-Sugarcane/SC_OPHARV_SAM.f90"
+		    "Plant/SAMUCA-Sugarcane/SC_OPHARV_SAM.f90"
         "Plant/SAMUCA-Sugarcane/SC_OUTPUT_SAM.for"
         "Plant/SAMUCA-Sugarcane/SC_PGS.f90"
         "Plant/SAMUCA-Sugarcane/SC_radiat.f90"
@@ -565,8 +575,10 @@ set(
         "Soil/GHG/Denit_Ceres.for"
         "Soil/GHG/Denit_DayCent.for"
         "Soil/GHG/diffusiv.for"
-        "Soil/GHG/N2O_mod.for"
+        "Soil/GHG/GHG_mod.for"
         "Soil/GHG/nox_pulse.f90"
+        "Soil/GHG/Methane.for"
+        "Soil/GHG/Methmod.for"
         "Soil/Inorganic_K/OpSoilKi.for"
         "Soil/Inorganic_K/SoilKi.for"
         "Soil/Inorganic_K/SoilK_init.for"
