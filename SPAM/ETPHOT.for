@@ -121,6 +121,13 @@ C         added by BAK on 10DEC2015
       REAL AGEQESL, AGEQESLN, CO2QESL, CO2QESLN, QEFFSL, QEFFSLN
 
       REAL PSTRES1  !3/22/2011
+!     Ozone input added by JG 12/15/2021. Included CO2 inputs for interaction
+      REAL OZON7
+      REAL FO3
+      REAL FOZ1
+      REAL PRFO3
+      REAL CCEFF, CCMAX, CCMP
+      REAL CCK, A0, PRATIO
 
 !      SAVE AZIR,BETN,CEC,DLAYR,DLAYR2,DULE,FNPGL,FNPGN,LFANGD,
 !     &  LL,LL2,LLE,LMXREF,LNREF,LWIDTH,NELAYR,NLAYR,NSLOPE,PALB,
@@ -182,6 +189,7 @@ C         added by BAK on 10DEC2015
       TGRODY = WEATHER % TGRODY 
       TMIN   = WEATHER % TMIN  
       WINDHR = WEATHER % WINDHR 
+      OZON7  = WEATHER % OZON7
 
 !     Retrieve plant module data for use here.
       Call GET('PLANT', 'CANHT',  CANHT)
@@ -233,7 +241,8 @@ C     MEEVP reset on exit from ETPHOT to maintain input settings.
      &      LNREF, NSLOPE, PALBW, QEREF, ROWSPC,          !Output
      &      SCVP, SLWREF, SLWSLO, TYPPGL, TYPPGN,         !Output
      &      XLMAXT, YLMAXT, PHTHRS10,                     !Output
-     &      CCNEFF, CICAD, cmxsf,cqesf,pgpath)            !Output
+     &      CCNEFF, CICAD, cmxsf,cqesf,pgpath,            !Output
+     &      CCEFF, CCMAX, CCMP, FOZ1)                     !Output added by JG for ozone
 
           CALL OpETPhot(CONTROL, ISWITCH,
      &        PCINPD, PG, PGNOON, PCINPN, SLWSLN, SLWSHN,
@@ -670,6 +679,27 @@ C          ES = MAX(MIN(EDAY,AWEV1),0.0)
             ENDIF
           ENDIF
 !*****************************************
+!         Calculate ozone stress on photosynthesis. Added by JG 12/15/2021
+!         FO3 ranges between 0.0-1.0, 1.0 = no stress, 0.0 = max stress
+          IF (OZON7 .GT. 25.0) THEN
+              FO3 = (-(FOZ1/100) * OZON7) + (1.0 + (FOZ1/100 * 25.0))
+              FO3 = MAX(FO3, 0.0)
+          ELSE
+              FO3 = 1.0
+          ENDIF
+!         Ozone interaction with CO2 and water stress (SWFAC). SWFAC is between 0.0-1.0
+!         CO2 effect on photosynthesis, same as in PHOTO.for
+!         Adjust canopy photosynthesis for CO2 concentration assuming a
+!         reference value of CO2 of 330 ppmv.
+          CCK = CCEFF / CCMAX
+          A0 = -CCMAX * (1. - EXP(-CCK * CCMP))
+          PRATIO = A0 + CCMAX * (1. - EXP(-CCK * CO2))
+          
+          IF (SWFAC .LT. 0.0001) THEN  ! added to prevent dividing by 0
+              PRFO3 = 1.0
+          ELSE
+              PRFO3 = MIN(1.0, (FO3*PRATIO)/SWFAC)
+          ENDIF
 
           IF (MEEVP .NE. 'Z') THEN
 C
@@ -677,11 +707,12 @@ C KJB USE THE REAL MID-DAY WATER STRESS FACTOR HERE, NOT THE DAILY ONE?
 C KJB AT LEAST FOR THE PGNOON?
 C
 !     CHP 3/22/2011 - multiply by P stress here.
-            PG = PG * SWFAC * PSTRES1
-            PGCO2 = PGCO2 * SWFAC * PSTRES1
-            LMXSLN = LMXSLN * SWFAC * PSTRES1
-            LMXSHN = LMXSHN * SWFAC * PSTRES1
-            PGNOON = PGNOON * SWFAC * PSTRES1
+!            PG = PG * SWFAC * PSTRES1
+            PG = PG * MIN(SWFAC, PRFO3) * PSTRES1
+            PGCO2 = PGCO2 * MIN(SWFAC, PRFO3) * PSTRES1
+            LMXSLN = LMXSLN * MIN(SWFAC, PRFO3) * PSTRES1
+            LMXSHN = LMXSHN * MIN(SWFAC, PRFO3) * PSTRES1
+            PGNOON = PGNOON * MIN(SWFAC, PRFO3) * PSTRES1
           ENDIF
 
 C         Post-processing for some stress effects (duplicated in PHOTO).
@@ -1031,7 +1062,8 @@ C=======================================================================
      &  LNREF, NSLOPE, PALBW, QEREF, ROWSPC,              !Output
      &  SCVP, SLWREF, SLWSLO, TYPPGL, TYPPGN,             !Output
      &  XLMAXT, YLMAXT, PHTHRS10,                         !Output
-     &  ccneff, cicad, cmxsf, cqesf, pgpath)              !Output
+     &  ccneff, cicad, cmxsf, cqesf, pgpath,              !Output
+     &  CCEFF, CCMAX, CCMP, FOZ1)                         !Output added by JG for ozone
 
       IMPLICIT NONE
       SAVE
@@ -1052,6 +1084,7 @@ C=======================================================================
       character(len=2) pgpath
       character(len=8) model
       real ccneff, cicad, cmxsf, cqesf
+      REAL CCEFF, CCMAX, CCMP, FOZ1  !Added by JG for ozone
 
 C     Read IBSNAT35.INP file.
 
@@ -1101,10 +1134,14 @@ C     Read species file.
       SECTION = '!*PHOT'
       CALL FIND(LUNCRP,SECTION,LNUM,FOUND)
 
-!     Read 3rd line of photosynthesis section of species file
+!     Read 2nd line of photosynthesis section of species file
+!     JG read 2nd line instead of 3rd for CO2 effect on ozone
       CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
       CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
-      CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+      READ(C80,'(3F6.1)',IOSTAT=ERRNUM) CCMP, CCMAX, CCEFF
+      IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILECC,LNUM)
+      
+      CALL IGNORE(LUNCRP,LNUM,ISECT,C80)  !3rd line
       READ(C80,'(4F6.0,3X,A)',IOSTAT=ERRNUM) (FNPGN(I),I=1,4), TYPPGN
       IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILECC,LNUM)
 
@@ -1144,6 +1181,12 @@ C     Read species file.
          cqesf = -99
       end if
 
+!     JG read ozone parameter from species file
+      SECTION = '!*OZON'
+      CALL FIND(LUNCRP,SECTION,LNUM,FOUND)
+      CALL IGNORE(LUNCRP,LNUM,ISECT,C80)
+      READ(C80,'(F6.2)',IOSTAT=ERRNUM) FOZ1
+      IF (ERRNUM .NE. 0) CALL ERROR(ERRKEY,ERRNUM,FILECC,LNUM)
 
       CLOSE(LUNCRP)
 

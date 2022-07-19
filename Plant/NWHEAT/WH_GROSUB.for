@@ -2254,8 +2254,8 @@ cbak optimum of 18oc for photosynthesis
           FO3 = 1.0
       Endif
 
-      if (swdef(photo_nw) .eq. 0.0) then
-          PRFO3 = min(1.0, (FO3*rue_factor)/(swdef(photo_nw)+0.0001)) ! added to prevent dividing by 0
+      if (swdef(photo_nw) .lt. 0.0001) then  ! added to prevent dividing by 0
+          PRFO3 = 1.0
       else
           PRFO3 = min(1.0, (FO3*rue_factor)/swdef(photo_nw)) ! ozone effect added by JG
       endif

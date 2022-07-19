@@ -174,3 +174,5 @@
 !  1.00          NRAT_FAC            !Operate on NRATIO (VEGGR 297)
 !  0.20  0.50    EXCS_FAC, EXCS_EXP  !Operate on EXCESS (VEGGR 366)
 
+!*OZONE STRESS PARAMETERS
+  0.00  0.00    FOZ1, SFOZ1   !Ozone stress on photosynthesis and leaf senescence (0 = off)

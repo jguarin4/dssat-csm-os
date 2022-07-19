@@ -11,3 +11,5 @@ RI OPT   RWEP   1.50
 RI OPT   PORM   0.00                   ! Minimum pore space
 RI OPT   RWMX   0.03                   ! Max root water uptake
 RI OPT   RLWR   1.05                   ! Root length weight ratio
+RI OPT   FOZ1   0.00                   ! Ozone stress factor for photosynthesis (0 = off)
+RI OPT   SFOZ   0.00                   ! Ozone stress factor for leaf senescence (0 = off)
