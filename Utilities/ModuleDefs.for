@@ -748,11 +748,12 @@ C             CHP Added TRTNUM to CONTROL variable.
       Case DEFAULT; ERR = .TRUE.
       END SELECT
 
+!     JG turned off plastic mulch WARNING.OUT message as temporary fix for large runs
       IF (ERR) THEN
-        WRITE(MSG(1),'("Error transferring variable: ",A, " in ",A)') 
-     &      Trim(VarName), Trim(ModuleName)
-        MSG(2) = 'Value set to zero.'
-        CALL WARNING(2,'GET_REAL',MSG)
+!        WRITE(MSG(1),'("Error transferring variable: ",A, " in ",A)') 
+!     &      Trim(VarName), Trim(ModuleName)
+!        MSG(2) = 'Value set to zero.'
+!        CALL WARNING(2,'GET_REAL',MSG)
       ENDIF
 
       RETURN
