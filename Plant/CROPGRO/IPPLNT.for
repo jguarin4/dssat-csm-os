@@ -15,6 +15,7 @@ C  06/30/2006 CHP/CDM Added KC_SLOPE to SPE file and KC_ECO to ECO file.
 C                 Added warning for use of default ecotype.
 !  09/11/2008 KJB, CHP Added 5 species parameters affecting N stress
 C  01/18/2018 KRT Added functionality for ASCE dual Kc ET routines
+C  02/10/2023 JG  Added ozone parameters to read from ECO file
 C-----------------------------------------------------------------------
 !  Called:      PLANT
 !  Calls:       FIND, ERROR, IGNORE
@@ -26,7 +27,8 @@ C=======================================================================
      &  PLIPSH, PLIGSD, PLIGSH, PMINSD, PMINSH, POASD,    !Output
      &  POASH, PORMIN, PROLFI, PRORTI, PROSHI, PROSTI,    !Output
      &  R30C2, RCH2O, RES30C, RFIXN, RLIG, RLIP, RMIN,    !Output
-     &  RNH4C, RNO3C, ROA, RPRO, RWUEP1, RWUMX, TTFIX)    !Output
+     &  RNH4C, RNO3C, ROA, RPRO, RWUEP1, RWUMX, TTFIX,    !Output
+     &  FOZ1, SFOZ1, OBASE)                               !Output  JG added for ozone
 !     &  NSTR_FAC, NSTR_EXP, NRAT_FAC, EXCS_FAC, EXCS_EXP) !Output
 
 C-----------------------------------------------------------------------
@@ -65,6 +67,9 @@ C-----------------------------------------------------------------------
 !     Species-dependant variables exported to SPAM or WATBAL:
       REAL EORATIO, KCAN, KEP, PORMIN, RWUMX, RWUEP1
       REAL KCAN_ECO, KC_SLOPE
+      
+! JG added ozone parameters 02/10/2023      
+      REAL FOZ1, SFOZ1, OBASE
 
 !     Species parameters for N stress  9/11/2008
 !     REAL NSTR_FAC, NSTR_EXP, NRAT_FAC, EXCS_FAC, EXCS_EXP
@@ -381,6 +386,7 @@ C-----------------------------------------------------------------------
 
 !       Get ecotype Kcan, if present.  
 !       If not here, use value read from species file.
+!       JG added ozone parameters 02/05/2023
         LUNECO = LUNCRP
         OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERR)
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
@@ -390,7 +396,8 @@ C-----------------------------------------------------------------------
           CALL IGNORE(LUNECO, LNUM, ISECT, C255)
           IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
      &          (C255(1:1) .NE. '*')) THEN
-            READ (C255,'(A6,139X,F6.0)',IOSTAT=ERR) ECOTYP, KCAN_ECO
+            READ (C255,'(A6,139X,4F6.0)',IOSTAT=ERR) ECOTYP, KCAN_ECO, 
+     &            FOZ1, SFOZ1, OBASE
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
             IF (ECOTYP .EQ. ECONO) EXIT
 

@@ -34,6 +34,7 @@ C  07/08/2003 CHP Added KSEVAP for export to soil evaporation routines.
 !  06/06/2006 CHP/CDM Added KC_SLOPE to SPE file and KC_ECO to ECO file.
 !  07/13/2006 CHP Added P model
 !  06/11/2007 CHP PStres1 affects photosynthesis, PStres2 affects growth
+!  02/10/2023 JG  Added ozone effect on photosynthesis and leaf senescence
 C=======================================================================
 
       SUBROUTINE CROPGRO(CONTROL, ISWITCH, 
@@ -169,7 +170,9 @@ C=======================================================================
       REAL OZON7
       REAL FO3
       REAL FOZ1
+      REAL OBASE
       REAL PRFO3
+      REAL SFOZ1
 
 !-----------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
@@ -233,7 +236,8 @@ C=======================================================================
      &  PLIPSH, PLIGSD, PLIGSH, PMINSD, PMINSH, POASD,    !Output
      &  POASH, PORMIN, PROLFI, PRORTI, PROSHI, PROSTI,    !Output
      &  R30C2, RCH2O, RES30C, RFIXN, RLIG, RLIP, RMIN,    !Output
-     &  RNH4C, RNO3C, ROA, RPRO, RWUEP1, RWUMX, TTFIX)    !Output
+     &  RNH4C, RNO3C, ROA, RPRO, RWUEP1, RWUMX, TTFIX,    !Output
+     &  FOZ1, SFOZ1, OBASE)                               !Output  JG added for ozone
 
       KTRANS = KEP
       KSEVAP = -99.   !Defaults to old method of light
@@ -244,6 +248,7 @@ C=======================================================================
      &    BETN, CO2, DXR57, EXCESS, KCAN, KC_SLOPE,       !Input
      &    NR5, OZON7, PAR, PStres1, SLPF, RNITP, SLAAD,   !Input
      &    SWFAC, TDAY, XHLAI, XPOD,                       !Input
+     &    FOZ1, OBASE,                                    !Input
      &    AGEFAC, PG)                                     !Output
       ENDIF
 
@@ -354,6 +359,7 @@ C-----------------------------------------------------------------------
         CALL SENES(RUNINIT, 
      &    FILECC, CLW, DTX, KCAN, NR7, NRUSLF, OZON7, PAR,!Input
      &    RHOL, SLAAD, STMWT, SWFAC, VSTAGE, WTLF, XLAI,  !Input
+     &    SFOZ1, OBASE,                                   !Input
      &    SLDOT, SLNDOT, SSDOT, SSNDOT)                   !Output
 
 C-----------------------------------------------------------------------
@@ -463,6 +469,7 @@ C-----------------------------------------------------------------------
      &    BETN, CO2, DXR57, EXCESS, KCAN, KC_SLOPE,       !Input
      &    NR5, OZON7, PAR, PStres1, SLPF, RNITP, SLAAD,   !Input
      &    SWFAC, TDAY, XHLAI, XPOD,                       !Input
+     &    FOZ1, OBASE,                                    !Input
      &    AGEFAC, PG)                                     !Output
         ENDIF
       ENDIF
@@ -619,6 +626,7 @@ C-----------------------------------------------------------------------
       CALL SENES(SEASINIT, 
      &    FILECC, CLW, DTX, KCAN, NR7, NRUSLF, OZON7, PAR,!Input
      &    RHOL, SLAAD, STMWT, SWFAC, VSTAGE, WTLF, XLAI,  !Input
+     &    SFOZ1, OBASE,                                   !Input
      &    SLDOT, SLNDOT, SSDOT, SSNDOT)                   !Output
 
 C-----------------------------------------------------------------------
@@ -720,6 +728,7 @@ C-----------------------------------------------------------------------
      &    BETN, CO2, DXR57, EXCESS, KCAN, KC_SLOPE,       !Input
      &    NR5, OZON7, PAR, PStres1, SLPF, RNITP, SLAAD,   !Input
      &    SWFAC, TDAY, XHLAI, XPOD,                       !Input
+     &    FOZ1, OBASE,                                    !Input
      &    AGEFAC, PG)                                     !Output
         ENDIF
       ENDIF
@@ -1155,6 +1164,7 @@ C-----------------------------------------------------------------------
       CALL SENES(INTEGR, 
      &    FILECC, CLW, DTX, KCAN, NR7, NRUSLF, OZON7, PAR,!Input
      &    RHOL, SLAAD, STMWT, SWFAC, VSTAGE, WTLF, XLAI,  !Input
+     &    SFOZ1, OBASE,                                   !Input
      &    SLDOT, SLNDOT, SSDOT, SSNDOT)                   !Output
 
 C-----------------------------------------------------------------------
