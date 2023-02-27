@@ -386,7 +386,7 @@ C-----------------------------------------------------------------------
 
 !       Get ecotype Kcan, if present.  
 !       If not here, use value read from species file.
-!       JG added ozone parameters 02/05/2023
+!       JG added ozone parameters 02/05/2023, removed KCAN_ECO as requested by GH and KJB
         LUNECO = LUNCRP
         OPEN (LUNECO,FILE = FILEGC,STATUS = 'OLD',IOSTAT=ERR)
         IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,0)
@@ -396,7 +396,7 @@ C-----------------------------------------------------------------------
           CALL IGNORE(LUNECO, LNUM, ISECT, C255)
           IF ((ISECT .EQ. 1) .AND. (C255(1:1) .NE. ' ') .AND.
      &          (C255(1:1) .NE. '*')) THEN
-            READ (C255,'(A6,139X,4F6.0)',IOSTAT=ERR) ECOTYP, KCAN_ECO, 
+            READ (C255,'(A6,120X,3F6.0)',IOSTAT=ERR) ECOTYP,
      &            FOZ1, SFOZ1, OBASE
             IF (ERR .NE. 0) CALL ERROR(ERRKEY,ERR,FILEGC,LNUM)
             IF (ECOTYP .EQ. ECONO) EXIT
