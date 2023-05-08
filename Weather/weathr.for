@@ -36,6 +36,7 @@ C  06/02/2005 GH  Fixed call to WTHMOD in Seasinit section
 C  02/13/2006 JIL Export AMTRH (R/R0) for leaf rolling calculation
 !  04/28/2008 CHP Added option to read CO2 from file 
 !  07/25/2014 CHP Added daily CO2 read from weather file (DCO2)
+!  08/08/2022 JG  Added SDIF for daily diffuse solar radiation
 C-----------------------------------------------------------------------
 C  Called by: Main
 c  Calls:     DAYLEN, ERROR, HMET, IPWTH, SOLAR, WGEN, WTHMDB, WTHMOD
@@ -67,7 +68,7 @@ C=======================================================================
 
       REAL
      &  CCO2, CLOUDS, CO2, DAYL, DCO2, DEC, ISINB, OZON7, PAR, 
-     &  RAIN, REFHT, RHUM, S0N, SNDN, SNUP, SRAD, 
+     &  RAIN, REFHT, RHUM, SDIF, S0N, SNDN, SNUP, SRAD, 
      &  TA, TAMP, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,
      &  TMAX, TMIN, TWILEN, VAPR, WINDHT, WINDRUN, WINDSP,
      &  XELEV, XLAT, XLONG
@@ -119,7 +120,7 @@ C=======================================================================
      &    CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,      !Output
      &    MEWTH, OZON7, PAR,                              !Output
      &    PATHWTC, PATHWTG, PATHWTW,                      !Output
-     &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
+     &    RAIN, REFHT, RHUM, RSEED1, SDIF, SRAD,          !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
      &    RUNINIT)
@@ -148,7 +149,7 @@ C=======================================================================
           CALL FCAST_STORE(                    
      &      CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,       !Output
      &      FYRDOY, FYRSIM, MEWTH, OZON7, PATHWTC, PATHWTG,  !Output
-     &      PATHWTW,REFHT, RHUM, RSEED1, TAMP, TAV, TDEW,    !Output
+     &      PATHWTW,REFHT, RHUM, RSEED1, SDIF,TAMP,TAV,TDEW, !Output
      &      VAPR, WINDHT, WINDSP, XELEV, XLAT, XLONG, YREND) !Output
 
           CONTROL2 % YRDOY = FYRDOY
@@ -163,7 +164,7 @@ C=======================================================================
      &      CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    !Output
      &      MEWTH, OZON7, PAR,                            !Output
      &      PATHWTC, PATHWTG, PATHWTW,                    !Output
-     &      RAIN, REFHT, RHUM, RSEED1, SRAD,              !Output
+     &      RAIN, REFHT, RHUM, RSEED1, SDIF, SRAD,        !Output
      &      TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    !Output
      &      WINDSP, XELEV, XLAT, XLONG, YREND,            !Output
      &      SEASINIT)
@@ -231,7 +232,7 @@ C         message to the WARNING.OUT file.
         CALL FCAST_RETRIEVE(WDATE,            !Input
      &    DCO2, FYRDOY, OZON7, PAR, RAIN,     !Output
      &    RHUM, TDEW, TMAX, TMIN, VAPR,       !Output
-     &    SRAD, WINDSP)                       !Output
+     &    SDIF, SRAD, WINDSP)                 !Output
       ENDIF
 
 C     Calculate day length, sunrise and sunset.
@@ -283,7 +284,7 @@ C     Compute daily normal temperature.
 
       CALL OpWeath(CONTROL, ISWITCH, 
      &    CLOUDS, CO2, DAYL, FYRDOY, OZON7, PAR, RAIN,    !Daily values
-     &    SRAD, TAVG, TDAY, TDEW, TGROAV, TGRODY,         !Daily values
+     &    SDIF, SRAD, TAVG, TDAY, TDEW, TGROAV, TGRODY,   !Daily values
      &    TMAX, TMIN, TWILEN, WINDSP, WEATHER)            !Daily values
 
 !***********************************************************************
@@ -305,7 +306,7 @@ C     Compute daily normal temperature.
         CALL FCAST_RETRIEVE(YRDOY,            !Input
      &    DCO2, FYRDOY, OZON7, PAR, RAIN,     !Output
      &    RHUM, TDEW, TMAX, TMIN, VAPR,       !Output
-     &    SRAD, WINDSP)                       !Output
+     &    SDIF, SRAD, WINDSP)                 !Output
         IF (FYRDOY .GT. 0) THEN
           CONTROL2 % YRDOY = FYRDOY
           CONTROL2 % YRSIM = FYRSIM
@@ -323,7 +324,7 @@ C       Read new weather record.
      &      CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    !Output
      &      MEWTH, OZON7, PAR,                            !Output
      &      PATHWTC, PATHWTG, PATHWTW,                    !Output
-     &      RAIN, REFHT, RHUM, RSEED1, SRAD,              !Output
+     &      RAIN, REFHT, RHUM, RSEED1, SDIF, SRAD,        !Output
      &      TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    !Output
      &      WINDSP, XELEV, XLAT, XLONG, YREND,            !Output
      &      RATE)
@@ -407,7 +408,7 @@ C     Compute daily normal temperature.
 C-----------------------------------------------------------------------
       CALL OpWeath(CONTROL, ISWITCH, 
      &    CLOUDS, CO2, DAYL, FYRDOY, OZON7, PAR, RAIN,    !Daily values
-     &    SRAD, TAVG, TDAY, TDEW, TGROAV, TGRODY,         !Daily values
+     &    SDIF, SRAD, TAVG, TDAY, TDEW, TGROAV, TGRODY,   !Daily values
      &    TMAX, TMIN, TWILEN, WINDSP, WEATHER)            !Daily values
 
 !***********************************************************************
@@ -421,7 +422,7 @@ C-----------------------------------------------------------------------
      &    CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,      !Output
      &    MEWTH, OZON7, PAR,                              !Output
      &    PATHWTC, PATHWTG, PATHWTW,                      !Output
-     &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
+     &    RAIN, REFHT, RHUM, RSEED1, SDIF, SRAD,          !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
      &    SEASEND)
@@ -429,7 +430,7 @@ C-----------------------------------------------------------------------
 
       CALL OpWeath(CONTROL, ISWITCH, 
      &    CLOUDS, CO2, DAYL, FYRDOY, OZON7, PAR, RAIN,    !Daily values
-     &    SRAD, TAVG, TDAY, TDEW, TGROAV, TGRODY,         !Daily values
+     &    SDIF, SRAD, TAVG, TDAY, TDEW, TGROAV, TGRODY,   !Daily values
      &    TMAX, TMIN, TWILEN, WINDSP, WEATHER)            !Daily values
 
       CALL PUT('WEATHER','WYEAR',WYEAR)
@@ -461,6 +462,7 @@ C-----------------------------------------------------------------------
       WEATHER % PAR    = PAR   
       WEATHER % RAIN   = RAIN  
       WEATHER % RHUM   = RHUM  
+      WEATHER % SDIF   = SDIF  
       WEATHER % SNDN   = SNDN  
       WEATHER % SNUP   = SNUP  
       WEATHER % SRAD   = SRAD  

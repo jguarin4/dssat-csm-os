@@ -15,6 +15,7 @@
 !  01/18/2022 JG cleaned ozone parameters in ECO file
 !  11/01/2021 FO Added missing CONTROL type for WH_temp.for subroutines
 !  01/18/2022 TF Added statments to prevent divisions by zero
+!  08/02/2022 JG Added diffuse light (SDIF) effect in ce_tops
 !----------------------------------------------------------------------
 !  Called by : WH_APSIM
 !
@@ -34,7 +35,7 @@ C The statements begining with !*! are refer to APSIM source codes
      &      KG2PPM, LL, NLAYR, nh4ppm, no3ppm,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
      &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input ! OZON7 added by BTK, JG
-     &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
+     &      RUE, SAT, SDEPTH, SDIF, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
      &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
      &      TRWUP, TSEN, vd, vd1, vd2, VegFrac, WLIDOT,       !Input
@@ -176,6 +177,7 @@ C The statements begining with !*! are refer to APSIM source codes
                   ! from seed reserves (g/plant)
       REAL CLW    ! Cumulative leaf grow (g[leaf]/m2) - (WP 07/21/2017)
       real cwdemand     ! crop water demand (mm) add by JZW
+      real diffuse_frac  ! fraction of diffuse solar radiation added by JG 03/29/2023
       REAL DISLA    ! Diseased leaf area (cm2[leaf]/m2[ground]/d) - (Fabio 09/19/2018)
 !     real gndmd                 ! (OUTPUT) grain N demand (g/plant) add by JZW
       Real tempmx, tempmn !add by JZW
@@ -289,6 +291,7 @@ C The statements begining with !*! are refer to APSIM source codes
       real rue_factor  ! parameter for CO2 effect on pcarbo calculation
       real rwu_nw (NL)! (nwheats_watup_new OUTPUT) root water 
                       !  uptake (mm)
+      REAL SDIF     ! daily diffuse solar radiation (MJ/m2)
       REAL seedrvNW ! seed carbohydrate reserves (g/plant) 
       REAL sen_la   ! Senesced leaf area, mm2/plant      nwheat
       REAL sen_la_p ! Previous Senesced leaf area, mm2/plant - (WP 07/21/2017)
@@ -2174,10 +2177,26 @@ cbak    testing:
 !*!     ce_tops = 3.8 * divide (solrad**0.63, solrad, 0.0)
 !*!     ce_tops = 3.2 * divide (solrad**0.7, solrad, 0.0)
 !*!     ce_tops = u_bound(ce_tops,2.0)
+! JG added daily diffuse solar radiation input if available in weather file, i.e., >= 0.0
+! SDIF will always be less than or equal to total SRAD, but added condition as check
+      if (SDIF .ge. 0.0 .and. SDIF .le. SRAD) then
+        diffuse_frac = SDIF / SRAD
+! JG added fractional change in RUE as function of diffuse fraction based on Greenwald et al., 2006
+! Choose either 100% or 50% maximum change in RUE and uncomment lines
+! Using 100% maximum change in RUE
+!        ce_tops = RUE * (1 + (2.41 * diffuse_frac**3 -
+!     &            6.52 * diffuse_frac**2 + 5.84 * diffuse_frac - 0.74))
+!     &            * (SRAD**nwheats_kvalue / SRAD)
+! Using 50% maximum change in RUE
+        ce_tops = RUE * (1 + (1.21 * diffuse_frac**3 -
+     &            3.26 * diffuse_frac**2 + 2.92 * diffuse_frac - 0.37))
+     &            * (SRAD**nwheats_kvalue / SRAD)
+      else
 ! JG added pre- and post-anthesis RUE and kvalue routine
         ce_tops = RUE * (SRAD**nwheats_kvalue / SRAD)
 !        ce_tops = RUE * (SRAD**0.63 / SRAD)
         ce_tops = MIN(ce_tops,2.0)
+      endif
  
 !*!   if (nwheats_min_rootfr() .gt. 0.0) then
       if (rootfr(istage) .gt. 0.0) then
@@ -3655,6 +3674,7 @@ cjh quick fix for maturity stage
 ! SLFW        Leaf senescence factor due to water sterss (0-1)
 ! SNH4(L)     Ammonium nitrogen in soil layer L, kg N/ha
 ! SNO3(L)     Nitrate content in soil layer L, kg N/ha
+! SDIF        Daily diffuse solar radiation, MJ/m2/day
 ! SRAD        Daily solar radiation, MJ/M2/day
 ! OZON7       Daily 7-hour mean ozone concentration (9:00-15:59), ppb
 ! stemgr      Stem growth before emergence (g/plant) (WHAPS-nwheats.for)

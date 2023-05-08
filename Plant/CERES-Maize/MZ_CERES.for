@@ -26,6 +26,7 @@ C======================================================================
 !  07/13/2006 CHP Added P model
 !  09/11/2007 JIL Added IXIM model
 !  10/31/2007 CHP Added simple K model.
+!  04/05/2023 JG  Added SDIF for diffuse radiation input
 !----------------------------------------------------------------------
 !  Called : Alt_Plant
 !----------------------------------------------------------------------
@@ -216,6 +217,9 @@ C      REAL            PRLF
       REAL OZON7
       REAL FOZ1, SFOZ1, OBASE
 
+!     Added for diffuse radiation
+      REAL SDIF
+
 !     ------------------------------------------------------------------
 !     Define constructed variable types based on definitions in
 !     ModuleDefs.for.
@@ -264,6 +268,7 @@ C      REAL            PRLF
       TMIN   = WEATHER % TMIN
       TWILEN = WEATHER % TWILEN
       OZON7  = WEATHER % OZON7
+      SDIF   = WEATHER % SDIF
 
       DATA MZSTGNAM /
      &  'End Juveni',   !1
@@ -346,7 +351,7 @@ C----------------------------------------------------------------------
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail, OZON7, FOZ1, SFOZ1,      !Input
-     &      OBASE,                                            !Input
+     &      OBASE, SDIF,                                      !Input
      &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -500,7 +505,7 @@ C-----------------------------------------------------------------------
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail, OZON7, FOZ1, SFOZ1,      !Input
-     &      OBASE,                                            !Input
+     &      OBASE, SDIF,                                      !Input
      &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -665,7 +670,7 @@ C----------------------------------------------------------------------
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail, OZON7, FOZ1, SFOZ1,      !Input
-     &      OBASE,                                            !Input
+     &      OBASE, SDIF,                                      !Input
      &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -767,7 +772,7 @@ C----------------------------------------------------------------------
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail, OZON7, FOZ1, SFOZ1,      !Input
-     &      OBASE,                                            !Input
+     &      OBASE, SDIF,                                      !Input
      &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -876,7 +881,7 @@ C----------------------------------------------------------------------
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail, OZON7, FOZ1, SFOZ1,      !Input
-     &      OBASE,                                            !Input
+     &      OBASE, SDIF,                                      !Input
      &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -1093,6 +1098,7 @@ C----------------------------------------------------------------------
 ! SDDES(J)   Number of seeds destroyed today in cohort J when shells are 
 !              not destroyed (#/m2/day)
 ! SDEPTH      !Sowing depth, cm        
+! SDIF        !Daily diffuse solar radiation, MJ/m2/day
 ! SDNO(J)    Need to figure out how to use this array to pass in seed number???
 ! SDWT        !Seed (grain) weight, g/m2
 ! SECTION !Variable indicating which section to look for in an input file

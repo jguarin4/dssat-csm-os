@@ -57,6 +57,8 @@ C  08/09/2012 GH  Added CSCAS model
 !  09/01/2018  MJ modified Canegro interface, IRRAMT added.
 !  03/17/2020  WP Model TEFF from Mulugeta called on plant (added).
 !  08/19/2021 FV Added OilcropSun
+!  02/03/2023 JG Added ozone parameters
+!  04/05/2023 JG added diffuse radiation input
 C=======================================================================
 
       SUBROUTINE PLANT(CONTROL, ISWITCH,
@@ -128,6 +130,8 @@ C-----------------------------------------------------------------------
 
 !     Ozone for RICER added by JG 11/24/2021
       REAL OZON7
+!     Added diffuse radiation input JG 04/05/2023
+      REAL SDIF
 
       REAL, DIMENSION(2)  :: HARVFRAC
       REAL, DIMENSION(NL) :: NH4, NO3, RLV, UPPM  !, RWU
@@ -189,6 +193,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
       TMIN   = WEATHER % TMIN
       TWILEN = WEATHER % TWILEN
       OZON7  = WEATHER % OZON7
+      SDIF   = WEATHER % SDIF
 
 !***********************************************************************
 !***********************************************************************
@@ -547,7 +552,7 @@ C         Variables to run CASUPRO from Alt_PLANT.  FSR 07-23-03
      &    CO2, DAYL, EOP, FLOODWAT, HARVFRAC, NH4, NO3,   !Input
      &    SKi_Avail, SPi_AVAIL,                           !Input
      &    SOILPROP, SRAD, ST, SW, TMAX, TMIN, TRWUP,      !Input
-     &    TWILEN, YRPLT, OZON7,                           !Input
+     &    TWILEN, YRPLT, OZON7, SDIF,                     !Input
      &    FLOODN,                                         !I/O
      &    CANHT, HARVRES, XLAI, KUptake, MDATE, NSTRES,   !Output
      &    PORMIN, PUptake, RWUEP1, RWUMX,                 !Output
@@ -803,6 +808,7 @@ c     Total LAI must exceed or be equal to healthy LAI:
 !             transpiration)
 ! RWUMX     Maximum water uptake per unit root length, constrained by soil
 !             water (cm3[water] / cm [root])
+! SDIF      Daily diffuse solar radiation, MJ/m2/day
 ! SENESCE   Composite variable containing data about daily senesced plant
 !             matter. Structure of variable is defined in ModuleDefs.for
 ! SNOW      Snow accumulation (mm)

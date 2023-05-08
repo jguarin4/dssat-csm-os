@@ -4,7 +4,7 @@ Module Forecast
   Type DailyWeatherType
     INTEGER YRDOY
     REAL RAIN, SRAD, TMAX, TMIN, PAR
-    REAL DCO2, OZON7, RHUM, TDEW, VAPR, WINDSP
+    REAL DCO2, OZON7, RHUM, TDEW, VAPR, WINDSP, SDIF
   End Type
   TYPE (DailyWeatherType), Allocatable :: Obs_data(:)
 
@@ -32,7 +32,7 @@ CONTAINS
 SUBROUTINE FCAST_STORE(                                 &  
      CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,         &  !Output
      FYRDOY, FYRSIM, MEWTH, OZON7, PATHWTC, PATHWTG,    &  !Output
-     PATHWTW,REFHT, RHUM, RSEED1, TAMP, TAV, TDEW,      &  !Output
+     PATHWTW,REFHT, RHUM, RSEED1, SDIF, TAMP, TAV,TDEW, &  !Output
      VAPR, WINDHT, WINDSP, XELEV, XLAT, XLONG, YREND)      !Output
 
   USE ModuleData
@@ -47,7 +47,7 @@ SUBROUTINE FCAST_STORE(                                 &
 
   INTEGER DOY, I, Obs_YRDOY, RSEED1, YREND, YR, YRSIM
   INTEGER INCDAT, TIMDIF, FYRDOY, FYRSIM
-  REAL CCO2, DCO2, OZON7, PAR, RAIN, REFHT, RHUM
+  REAL CCO2, DCO2, OZON7, PAR, RAIN, REFHT, RHUM, SDIF
   REAL SRAD, TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT
   REAL WINDSP, XELEV, XLAT, XLONG
   TYPE (ControlType) CONTROL, CONTROL2
@@ -74,7 +74,7 @@ SUBROUTINE FCAST_STORE(                                 &
         CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    &    !Output
         MEWTH, OZON7, PAR,                            &    !Output
         PATHWTC, PATHWTG, PATHWTW,                    &    !Output
-        RAIN, REFHT, RHUM, RSEED1, SRAD,              &    !Output
+        RAIN, REFHT, RHUM, RSEED1, SDIF, SRAD,        &    !Output
         TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    &    !Output
         WINDSP, XELEV, XLAT, XLONG, YREND,            &    !Output
         SEASINIT)
@@ -141,6 +141,7 @@ SUBROUTINE FCAST_STORE(                                 &
     Obs_data % TDEW   = -99.
     Obs_data % VAPR   = -99.
     Obs_data % WINDSP = -99.
+    Obs_data % SDIF   = -99.
 
 !   Store the initial weather data here.
     Obs_data(0) % YRDOY  = Obs_YRDOY
@@ -155,6 +156,7 @@ SUBROUTINE FCAST_STORE(                                 &
     Obs_data(0) % VAPR   = VAPR
     Obs_data(0) % DCO2   = DCO2
     Obs_data(0) % OZON7  = OZON7
+    Obs_data(0) % SDIF   = SDIF
 
 ! ----------------------------------------------------------------------
 !   Get and store weather data between YRSIM and FODAT-1
@@ -172,7 +174,7 @@ SUBROUTINE FCAST_STORE(                                 &
           CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,    &    !Output
           MEWTH, OZON7, PAR,                            &    !Output
           PATHWTC, PATHWTG, PATHWTW,                    &    !Output
-          RAIN, REFHT, RHUM, RSEED1, SRAD,              &    !Output
+          RAIN, REFHT, RHUM, RSEED1, SDIF, SRAD,        &    !Output
           TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,    &    !Output
           WINDSP, XELEV, XLAT, XLONG, YREND,            &    !Output
           RATE)                                           
@@ -189,6 +191,7 @@ SUBROUTINE FCAST_STORE(                                 &
       Obs_data(I) % VAPR   = VAPR
       Obs_data(I) % DCO2   = DCO2
       Obs_data(I) % OZON7  = OZON7
+      Obs_data(I) % SDIF   = SDIF
     ENDDO
 
 ! ----------------------------------------------------------------------
@@ -207,7 +210,7 @@ END SUBROUTINE FCAST_STORE
 SUBROUTINE FCAST_RETRIEVE(WDATE,        &   !Input
         DCO2, FYRDOY, OZON7, PAR, RAIN, &   !Output
         RHUM, TDEW, TMAX, TMIN, VAPR,   &   !Output
-        SRAD, WINDSP)                       !Output
+        SDIF, SRAD, WINDSP)                 !Output
 
   USE ModuleData
   SAVE
@@ -216,7 +219,7 @@ SUBROUTINE FCAST_RETRIEVE(WDATE,        &   !Input
   INTEGER DOY, YR, FYRDOY, FYRDOY_Y
   INTEGER WDATE, I, TIMDIF, INCDAT
   REAL RAIN, TMAX, TMIN, SRAD, PAR
-  REAL DCO2, OZON7, RHUM, TDEW, VAPR, WINDSP
+  REAL DCO2, OZON7, RHUM, TDEW, VAPR, WINDSP, SDIF
   TYPE (ControlType) CONTROL
   EXTERNAL :: YR_DOY, TIMDIF, INCDAT
 
@@ -258,6 +261,7 @@ SUBROUTINE FCAST_RETRIEVE(WDATE,        &   !Input
     VAPR   = Obs_data(I) % VAPR
     DCO2   = Obs_data(I) % DCO2
     OZON7  = Obs_data(I) % OZON7
+    SDIF   = Obs_data(I) % SDIF
     FYRDOY = 0
   ENDIF
 

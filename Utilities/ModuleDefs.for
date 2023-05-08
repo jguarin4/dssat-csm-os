@@ -33,6 +33,7 @@ C             CHP Added TRTNUM to CONTROL variable.
 !  08/08/2017 WP  Version identification moved to CSMVersion.for
 !  08/08/2017 WP  Definitions related with OS platform moved to OSDefinitions.for
 !  05/28/2021 FO  Added code for LAT,LONG and ELEV output in Summary.OUT
+!  08/08/2022 JG  Added SDIF for diffuse solar radiation
 !=======================================================================
 
       MODULE ModuleDefs
@@ -142,7 +143,7 @@ C             CHP Added TRTNUM to CONTROL variable.
         REAL CLOUDS, CO2, DAYL, DCO2, PAR, RAIN, RHUM, SNDN, SNUP, 
      &    SRAD, TAMP, TA, TAV, TAVG, TDAY, TDEW, TGROAV, TGRODY,      
      &    TMAX, TMIN, TWILEN, VAPR, WINDRUN, WINDSP, VPDF, VPD_TRANSP,
-     &    OZON7
+     &    OZON7, SDIF
 
 !       Hourly weather data
         REAL, DIMENSION(TS) :: AMTRH, AZZON, BETA, FRDIFP, FRDIFR, PARHR

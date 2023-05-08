@@ -46,7 +46,7 @@
      &      SWIDOT, TLNO, TMAX, TMIN, TRWUP, TSEN, VegFrac,   !Input
      &      WLIDOT, WRIDOT, WSIDOT, XNTI, XSTAGE,             !Input
      &      YRDOY, YRPLT, SKi_Avail, OZON7, FOZ1, SFOZ1,      !Input
-     &      OBASE,                                            !Input
+     &      OBASE, SDIF,                                      !Input
      &      EARS, GPP, MDATE,HARVFRAC,                        !I/O
      &      AGEFAC, APTNUP, AREALF, CANHT, CANNAA, CANWAA,    !Output
      &      CANWH, CARBO, GNUP, GPSM, GRNWT, GRORT, HI, HIP,  !Output
@@ -366,6 +366,11 @@
       REAL PRFO3
       REAL SFOZ1
       REAL SLFO3
+
+!     JG added for diffuse radiation 04/05/2023
+      REAL SDIF
+      REAL DIFFUSE_FRAC
+      REAL RUE_DIF
        
       TYPE (ResidueType) SENESCE 
       TYPE (SwitchType)  ISWITCH
@@ -1128,7 +1133,24 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
 
 ! JIL 08/01/2006 Intercepted PAR (MJ/plant d)
           IPAR = PAR/PLTPOP * (1.0 - EXP(-LIFAC * LAI))
-          PCARB = IPAR * RUE * PCO2
+
+! JG added daily diffuse solar radiation input if available in weather file, i.e., >= 0.0
+! SDIF will always be less than or equal to total SRAD, but added condition as check
+          IF (SDIF .GE. 0.0 .AND. SDIF .LE. SRAD) THEN
+              DIFFUSE_FRAC = SDIF / SRAD
+! JG added fractional change in RUE as function of diffuse fraction based on Greenwald et al., 2006
+! Choose either 100% or 50% maximum change in RUE and uncomment lines
+! Using 100% maximum change in RUE
+!              RUE_DIF = RUE * (1 + (2.41 * DIFFUSE_FRAC**3 -
+!     &        6.52 * DIFFUSE_FRAC**2 + 5.84 * DIFFUSE_FRAC - 0.74))
+! Using 50% maximum change in RUE
+              RUE_DIF = RUE * (1 + (1.21 * DIFFUSE_FRAC**3 -
+     &        3.26 * DIFFUSE_FRAC**2 + 2.92 * DIFFUSE_FRAC - 0.37))
+
+              PCARB = IPAR * RUE_DIF * PCO2
+          ELSE
+              PCARB = IPAR * RUE * PCO2
+          ENDIF
 
 !-SPE     PRFT= AMIN1(1.25 - 0.0035*((0.25*TMIN+0.75*TMAX)-25.0)**2,1.0) 
           TAVGD = 0.25*TMIN+0.75*TMAX
@@ -2274,6 +2296,7 @@ C-GH 60     FORMAT(25X,F5.2,13X,F5.2,7X,F5.2)
 ! RWUMX       ! Max root water uptake
 ! SAT(L)      !Saturated water holding capacity for soil layer L, cm3/cm3
 ! SATFAC      !Watterlogging stress factor (0-1.0)
+! SDIF        Daily diffuse solar radiation, MJ/m2/day
 ! SDWT        !Seed weight, g/m2
 ! SEEDRV      !Carbohydrate reserve in seed, g/plant
 ! SEEDRVE     !Carbohydrate reserve in seed at emergence, g/plant

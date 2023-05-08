@@ -6,13 +6,14 @@ C  REVISION       HISTORY
 C  02/08/2002 CHP Written
 C  06/06/2002 GH  Modified for crop rotations
 C  08/20/2002 GH  Modified for Y2K
+C  08/08/2022 JG  Added SDIF for diffuse solar radiation
 C-----------------------------------------------------------------------
 C  Called from:   WEATHR
 C  Calls:         None
 C=======================================================================
       SUBROUTINE OpWeath(CONTROL, ISWITCH, 
      &    CLOUDS, CO2, DAYL, FYRDOY, OZON7, PAR, RAIN,    !Daily values
-     &    SRAD, TAVG, TDAY, TDEW, TGROAV, TGRODY,         !Daily values
+     &    SDIF, SRAD, TAVG, TDAY, TDEW, TGROAV, TGRODY,   !Daily values
      &    TMAX, TMIN, TWILEN, WINDSP, WEATHER)            !Daily values
 
 !     Daily values:
@@ -32,7 +33,7 @@ C=======================================================================
       INTEGER RUN, YEAR, YRDOY, REPNO, FYRDOY, WDATE
 
       REAL
-     &  CLOUDS, CO2, DAYL, OZON7, PAR, RAIN, SRAD, 
+     &  CLOUDS, CO2, DAYL, OZON7, PAR, RAIN, SDIF, SRAD, 
      &  TAVG, TDAY, TDEW, TGROAV, TGRODY,
      &  TMAX, TMIN, TWILEN, WINDSP, VPDF, vpd_transp
 
@@ -98,6 +99,7 @@ C-----------------------------------------------------------------------
   120       FORMAT('@YEAR DOY   DAS',
      &'   PRED  DAYLD   TWLD   SRAD   PARD   CLDD   TMXD   TMND   TAVD',
      &'   TDYD   TDWD   TGAD   TGRD   WDSD   CO2D   VPDF    VPD  OZON7',
+     &'   SDIF',
      &'   WDATE')
           END IF   ! VSH
         ENDIF
@@ -134,10 +136,10 @@ C       Generate output for file Weather.OUT
              !TMXD  TMND  TAVD  TDYD   TDWD   TGAD   TGRD   
      &        TMAX, TMIN, TAVG, TDAY, TDEW, TGROAV, TGRODY,
            !  WDSD   CO2D  VPDF  VPD
-     &        WINDSP, CO2, VPDF, vpd_transp, OZON7, WDATE
+     &        WINDSP, CO2, VPDF, vpd_transp, OZON7, SDIF, WDATE
   300       FORMAT(1X,I4,1X,I3.3,1X,I5,
      &        5(1X,F6.1),1X,F6.2,
-     &        8(1X,F6.1),F7.1, 1x, F6.2, 1X, F6.2, F7.2, I8)
+     &        8(1X,F6.1),F7.1, 1x, F6.2, 1X, F6.2, F7.2,1X,F6.1, I8)
           END IF   ! VSH
           
           IF (FMOPT == 'C') THEN 

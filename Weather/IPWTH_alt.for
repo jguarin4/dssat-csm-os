@@ -20,6 +20,7 @@ C                   a sequence occurs on Jan 1.
 !  10/18/2016 CHP Read daily ozone values (ppb)
 !  05/28/2021 FO  Added code for LAT,LONG and ELEV output in Summary.OUT
 !  08/20/2021 FO  Added support for LAT, LONG and ELEV to NASA format files.
+!  08/08/2022 JG  Added SDIF for diffuse solar radiation
 C-----------------------------------------------------------------------
 C  Called by: WEATHR
 C  Calls:     None
@@ -29,7 +30,7 @@ C=======================================================================
      &    CCO2, DCO2, FILEW, FILEWC, FILEWG, FILEWW,      !Output
      &    MEWTH, OZON7, PAR,                              !Output
      &    PATHWTC, PATHWTG, PATHWTW,                      !Output
-     &    RAIN, REFHT, RHUM, RSEED1, SRAD,                !Output
+     &    RAIN, REFHT, RHUM, RSEED1, SDIF, SRAD,          !Output
      &    TAMP, TAV, TDEW, TMAX, TMIN, VAPR, WINDHT,      !Output
      &    WINDSP, XELEV, XLAT, XLONG, YREND,              !Output
      &    DYNAMIC)
@@ -69,7 +70,7 @@ C=======================================================================
 
       REAL
      &  XELEV,PAR,RAIN,REFHT,SRAD,TAV,TAMP,TDEW,TMAX,TMIN,WINDHT,
-     &  WINDSP,XLAT,XLONG,CCO2,RHUM, VAPR, DCO2, OZON7
+     &  WINDSP,XLAT,XLONG,CCO2,RHUM, VAPR, DCO2, OZON7, SDIF
 
       LOGICAL FEXIST, LongFile
 
@@ -82,7 +83,7 @@ C=======================================================================
       INTEGER, DIMENSION(MaxRecords) :: YRDOY_A, LineNumber
       REAL, DIMENSION(MaxRecords) :: SRAD_A, TMAX_A, TMIN_A, 
      &          RAIN_A, TDEW_A, WINDSP_A, PAR_A, RHUM_A, VAPR_A
-     &        , DCO2_A, OZON7_A
+     &        , DCO2_A, OZON7_A, SDIF_A
       INTEGER CurrentWeatherYear, DOYW
       INTEGER I, J, LastRec, LastWeatherDay, NRecords
       INTEGER FirstWeatherDay, YEARW, RecNum
@@ -578,7 +579,7 @@ C     Send labels and values to OPSUM
      &    ErrCode, FirstWeatherDay, LastWeatherDay,       !Output
      &    LineNumber, LongFile, NRecords, DCO2_A,         !Output
      &    OZON7_A, PAR_A, WFPASS,                         !Output
-     &    RAIN_A, RHUM_A, SRAD_A, TDEW_A, TMAX_A,         !Output
+     &    RAIN_A, RHUM_A, SDIF_A, SRAD_A, TDEW_A, TMAX_A, !Output
      &    TMIN_A, VAPR_A, WINDSP_A, YRDOY_A, YREND)       !Output
         IF (ErrCode > 0) RETURN 
       ENDIF
@@ -616,6 +617,7 @@ C     Send labels and values to OPSUM
       VAPR  = VAPR_A(I)
       DCO2  = DCO2_A(I)
       OZON7 = OZON7_A(I)
+      SDIF  = SDIF_A(I)
 
 !     Error checking
       CALL DailyWeatherCheck(CONTROL,
@@ -636,6 +638,7 @@ C     Send labels and values to OPSUM
         VAPR  = VAPR_A(I+1)
         DCO2  = DCO2_A(I+1)
         OZON7 = OZON7_A(I+1)
+        SDIF  = SDIF_A(I+1)
         YREND = -99
       
 !       Error checking
@@ -726,7 +729,7 @@ C         Read in weather file header.
      &    ErrCode, FirstWeatherDay, LastWeatherDay,       !Output
      &    LineNumber, LongFile, NRecords, DCO2_A,         !Output
      &    OZON7_A, PAR_A, WFPASS,                         !Output
-     &    RAIN_A, RHUM_A, SRAD_A, TDEW_A, TMAX_A,         !Output
+     &    RAIN_A, RHUM_A, SDIF_A, SRAD_A, TDEW_A, TMAX_A, !Output
      &    TMIN_A, VAPR_A, WINDSP_A, YRDOY_A, YREND)       !Output
         IF (ErrCode > 0) RETURN 
       ENDIF
@@ -789,6 +792,7 @@ C         Read in weather file header.
         VAPR   = VAPR_A(I)
         DCO2   = DCO2_A(I)
         OZON7  = OZON7_A(I)
+        SDIF   = SDIF_A(I)
 
         LastRec = I
         EXIT
@@ -895,7 +899,7 @@ C         Read in weather file header.
      &    ErrCode, FirstWeatherDay, LastWeatherDay,       !Output
      &    LineNumber, LongFile, NRecords, DCO2_A,         !Output
      &    OZON7_A, PAR_A, WFPASS,                         !Output
-     &    RAIN_A, RHUM_A, SRAD_A, TDEW_A, TMAX_A,         !Output
+     &    RAIN_A, RHUM_A, SDIF_A, SRAD_A, TDEW_A, TMAX_A, !Output
      &    TMIN_A, VAPR_A, WINDSP_A, YRDOY_A, YREND)       !Output
 
 !-----------------------------------------------------------------------
@@ -919,14 +923,14 @@ C         Read in weather file header.
       INTEGER CenturyWRecord !Century for first weather record
 
       REAL PAR, RAIN, SRAD, TDEW, TMAX, TMIN, WINDSP, RHUM, VAPR, DCO2
-      REAL OZON7
+      REAL OZON7, SDIF
 
       LOGICAL LongFile
 
 !     Arrays of weather data -- up to one year stored.
       INTEGER, DIMENSION(MaxRecords) :: YRDOY_A, LineNumber
       REAL, DIMENSION(MaxRecords) :: SRAD_A, TMAX_A, TMIN_A, DCO2_A,
-     &          OZON7_A, 
+     &          OZON7_A, SDIF_A, 
      &          RAIN_A, TDEW_A, WINDSP_A, PAR_A, RHUM_A, VAPR_A
       INTEGER LastRec, LastWeatherDay, NRecords
       INTEGER FirstWeatherDay
@@ -985,6 +989,7 @@ C         Read in weather file header.
           VAPR  = -99.
           DCO2  = -99.
           OZON7 = -99.
+          SDIF  = -99.
 
 !         Use free format reads
 !          READ (LINE,RECFMT,IOSTAT=ERR) YRDOYW,SRAD,TMAX,TMIN,
@@ -1060,6 +1065,10 @@ C         Read in weather file header.
               CASE('OZON7')   !Daily 7-hr mean ozone conc, ppb (9am-4pm)
                 READ(LINE(C1:C2),*,IOSTAT=ERR) OZON7
                 IF (ERR .NE. 0) OZON7 = -99.0
+                
+              CASE('SDIF')   !Daily diffuse solar radiation (MJ/m2)
+                READ(LINE(C1:C2),*,IOSTAT=ERR) SDIF
+                IF (ERR .NE. 0) SDIF = -99.0
             END SELECT
           ENDDO
 
@@ -1108,6 +1117,7 @@ C         Read in weather file header.
           VAPR_A(NRecords)  = VAPR
           DCO2_A(NRecords)  = DCO2
           OZON7_A(NRecords) = OZON7
+          SDIF_A(NRecords)  = SDIF
 
           LineNumber(NRecords) = LINWTH
 
@@ -1209,7 +1219,7 @@ C         Read in weather file header.
 !       Print confirmation that header was found to INFO.OUT
         SELECT CASE (TRIM(HEADER(I)))
           CASE('SRAD','TMAX','TMIN','RAIN','DEWP','TDEW','WIND',
-     &        'PAR','RHUM','VAPR','VPRS','DCO2','CO2','OZON7')
+     &        'PAR','RHUM','VAPR','VPRS','DCO2','CO2','OZON7','SDIF')
             IM = IM + 1
             WRITE(MSG(IM),'(2X,A15,"Col ",I3," - ",I3)') 
      &          HEADER(I), COL(I,1), COL(I,2)

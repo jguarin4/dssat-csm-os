@@ -28,6 +28,7 @@ C ALL RIGHTS RESERVED
 !  10/31/2007 CHP Added simple K model.
 !  06/08/2011 FSR NWheat migration to DSSAT based on MZ_CERES  
 !  07/21/2017 WP  Changes for pest damage
+!  08/08/2022 JG  Added SDIF for daily diffuse solar radiation
 !----------------------------------------------------------------------
 !  Called by: Plant
 !----------------------------------------------------------------------
@@ -155,6 +156,7 @@ C The statements begining with !*! are refer to APSIM source codes
       REAL            SAT(NL)  
       REAL            SATFAC    
       REAL            SDEPTH    
+      REAL            SDIF 
       REAL            SDWT 
       REAL            SEEDNO   
       REAL            SDWTAH  
@@ -299,6 +301,7 @@ C The statements begining with !*! are refer to APSIM source codes
       TMIN   = WEATHER % TMIN
       TWILEN = WEATHER % TWILEN
       OZON7  = WEATHER % OZON7    ! added by BTK, JG
+      SDIF   = WEATHER % SDIF
 
       DO L=1,NL
          dlayr_nw(L) = DLAYR(L) * 10.0
@@ -407,7 +410,7 @@ C-----------------------------------------------------------------------
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
      &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
-     &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
+     &      RUE, SAT, SDEPTH, SDIF, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
      &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
      &      TRWUP, TSEN, vd, vd1, vd2, VegFrac, WLIDOT,       !Input
@@ -528,7 +531,7 @@ C-----------------------------------------------------------------------
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
      &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
-     &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
+     &      RUE, SAT, SDEPTH, SDIF, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
      &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
      &      TRWUP, TSEN, vd, vd1, vd2, VegFrac, WLIDOT,       !Input
@@ -611,7 +614,7 @@ C----------------------------------------------------------------------
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
      &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
-     &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
+     &      RUE, SAT, SDEPTH, SDIF, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
      &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
      &      TRWUP, TSEN, vd, vd1, vd2, VegFrac, WLIDOT,       !Input
@@ -704,7 +707,7 @@ C-----------------------------------------------------------------------
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
      &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
-     &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
+     &      RUE, SAT, SDEPTH, SDIF, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
      &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
      &      TRWUP, TSEN, vd, vd1, vd2, VegFrac, WLIDOT,       !Input
@@ -773,7 +776,7 @@ C----------------------------------------------------------------------
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
      &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
-     &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
+     &      RUE, SAT, SDEPTH, SDIF, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
      &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
      &      TRWUP, TSEN, vd, vd1, vd2, VegFrac, WLIDOT,       !Input
@@ -850,7 +853,7 @@ C----------------------------------------------------------------------
      &      KG2PPM, LL, NLAYR,    NH4,    NO3,                !Input
      &      nwheats_dc_code, nwheats_kvalue, nwheats _vfac,   !Input
      &      OZON7, P3, pgdd, PLTPOP, PPLTD, rlv_nw, rtdep_nw, !Input 
-     &      RUE, SAT, SDEPTH, SeedFrac, SHF, SLPF, SOILPROP,  !Input
+     &      RUE, SAT, SDEPTH, SDIF, SeedFrac, SHF, SLPF, SOILPROP,  !Input
      &      SPi_AVAIL, SRAD, stage_gpla, STGDOY, stgdur,      !Input
      &      SUMDTT, sumstgdtt, SW, SWIDOT, TLNO, TMAX, TMIN,  !Input
      &      TRWUP, TSEN, vd, vd1, vd2, VegFrac, WLIDOT,       !Input
@@ -1052,6 +1055,7 @@ cal unit number for file
 ! SDDES(J)   Number of seeds destroyed today in cohort J when shells are 
 !              not destroyed (#/m2/day)
 ! SDEPTH      !Sowing depth, cm        
+! SDIF       Daily diffuse solar radiation (MJ/m2)
 ! SDNO(J)    Need to figure out how to use this array to pass in seed number???
 ! SDWT        !Seed (grain) weight, g/m2
 ! SECTION !Variable indicating which section to look for in an input file

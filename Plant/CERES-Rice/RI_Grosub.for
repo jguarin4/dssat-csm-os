@@ -11,7 +11,8 @@ C  08/29/2002 CHP/MUS Converted to modular format for inclusion in CSM.
 C  02/19/2003 CHP Converted dates to YRDOY format
 C  04/02/2008 US/CHP Added P and K models
 C  02/25/2012 JZW PHINT from CUL file (remove from SPE)
-C  02/03/2013 JG Added ozone parameters to CUL file
+C  02/03/2023 JG Added ozone parameters to CUL file
+C  04/05/2023 JG added diffuse radiation input
 C-----------------------------------------------------------------------
 C                         DEFINITIONS
 C
@@ -29,7 +30,7 @@ C=======================================================================
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, SW, SWFAC,   !Input
      &    TAGE, TBASE, TF_GRO, TMAX, TMIN, TSGRWT,        !Input
      &    TURFAC, VegFrac, WSTRES, XSTAGE, XST_TP, YRPLT, !Input
-     &    YRSOW,HARVFRAC, OZON7,                          !Input
+     &    YRSOW,HARVFRAC, OZON7, SDIF,                    !Input
      &    EMAT, FLOODN, PLANTS, RTWT,                     !I/O
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, DYIELD, !Output
      &    GNUP, GPP, GPSM, GRAINN, GRNWT, GRORT,          !Output
@@ -126,6 +127,11 @@ C=======================================================================
       REAL PRFO3
       REAL SFOZ1
       REAL SLFO3
+
+!     JG added diffuse radiation input 04/05/2023
+      REAL SDIF
+      REAL DIFFUSE_FRAC
+      REAL RUE_DIF
 
       LOGICAL FIELD, LTRANS, NEW_PHASE, TF_GRO, FIRST
 
@@ -600,7 +606,24 @@ CCCCC-PW
       EPLANTS = PLANTS**0.975
       RUEA    = 5.85   !6.85      UPS UH 03/21/03
       RUEX    = 0.65
-      PCARB   = RUEA*PAR**RUEX/EPLANTS*(1.0-AMIN1(Y1,Y2))
+
+! JG added daily diffuse solar radiation input if available in weather file, i.e., >= 0.0
+! SDIF will always be less than or equal to total SRAD, but added condition as check
+      IF (SDIF .GE. 0.0 .AND. SDIF .LE. SRAD) THEN
+          DIFFUSE_FRAC = SDIF / SRAD
+! JG added fractional change in RUE as function of diffuse fraction based on Greenwald et al., 2006
+! Choose either 100% or 50% maximum change in RUE and uncomment lines
+! Using 100% maximum change in RUE
+!          RUE_DIF = RUEA * (1 + (2.41 * DIFFUSE_FRAC**3 -
+!     &        6.52 * DIFFUSE_FRAC**2 + 5.84 * DIFFUSE_FRAC - 0.74))
+! Using 50% maximum change in RUE
+          RUE_DIF = RUEA * (1 + (1.21 * DIFFUSE_FRAC**3 -
+     &         3.26 * DIFFUSE_FRAC**2 + 2.92 * DIFFUSE_FRAC - 0.37))
+
+          PCARB   = RUE_DIF*PAR**RUEX/EPLANTS*(1.0-AMIN1(Y1,Y2))
+      ELSE
+          PCARB   = RUEA*PAR**RUEX/EPLANTS*(1.0-AMIN1(Y1,Y2))
+      ENDIF
       !
       ! PCARB2  = 2.95*PAR/EPLANTS*(1-AMAX1(Y1,Y2))
       !

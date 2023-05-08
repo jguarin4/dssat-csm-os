@@ -42,13 +42,15 @@ C  04/01/2004 CHP/US New PHEFAC calculation
 !  04/02/2008 CHP/US Added P model
 !  04/02/2008 US Added simple K model
 !  04/24/2019 US/JF/CHP Replace G4, G5 with THOT, TCLDP, TCLDF
+!  02/03/2023 JG Added ozone parameters
+!  04/05/2023 JG added diffuse radiation input
 C=======================================================================
 
       SUBROUTINE RICE(CONTROL, ISWITCH,
      &    CO2, DAYL, EOP, FLOODWAT, HARVFRAC, NH4, NO3,   !Input
      &    SKi_Avail, SPi_AVAIL,                           !Input
      &    SOILPROP, SRAD, ST, SW, TMAX, TMIN, TRWUP,      !Input
-     &    TWILEN, YRPLT, OZON7,                           !Input
+     &    TWILEN, YRPLT, OZON7, SDIF,                     !Input
      &    FLOODN,                                         !I/O
      &    CANHT, HARVRES, LAI, KUptake, MDATE, NSTRES,    !Output
      &    PORMIN, PUptake, RWUEP1, RWUMX,                 !Output
@@ -111,7 +113,10 @@ C-----------------------------------------------------------------------
 
 !     Added ozone functionality 11/24/2021
       REAL OZON7
- 
+
+!     Added diffuse radiation input JG 04/05/2023
+      REAL SDIF
+
 C-----------------------------------------------------------------------
 C     Initialize
 C-----------------------------------------------------------------------
@@ -219,7 +224,7 @@ C-----------------------------------------------------------------------
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, SW, SWFAC,   !Input
      &    TAGE, TBASE, TF_GRO, TMAX, TMIN, TSGRWT,        !Input
      &    TURFAC, VegFrac, WSTRES, XSTAGE, XST_TP, YRPLT, !Input
-     &    YRSOW,HARVFRAC, OZON7,                          !Input
+     &    YRSOW,HARVFRAC, OZON7, SDIF,                    !Input
      &    EMAT, FLOODN, PLANTS, RTWT,                     !I/O
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, DYIELD, !Output
      &    GNUP, GPP, GPSM, GRAINN, GRNWT, GRORT,          !Output
@@ -346,7 +351,7 @@ C--------------------------------------------------------------
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, SW, SWFAC,   !Input
      &    TAGE, TBASE, TF_GRO, TMAX, TMIN, TSGRWT,        !Input
      &    TURFAC, VegFrac, WSTRES, XSTAGE, XST_TP, YRPLT, !Input
-     &    YRSOW, HARVFRAC, OZON7,                         !Input
+     &    YRSOW, HARVFRAC, OZON7, SDIF,                   !Input
      &    EMAT, FLOODN, PLANTS, RTWT,                     !I/O
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, DYIELD, !Output
      &    GNUP, GPP, GPSM, GRAINN, GRNWT, GRORT,          !Output
@@ -378,7 +383,7 @@ C-----------------------------------------------------------------------
      &    STRCOLD, STRESSW, STRHEAT, SUMDTT, SW, SWFAC,   !Input
      &    TAGE, TBASE, TF_GRO, TMAX, TMIN, TSGRWT,        !Input
      &    TURFAC, VegFrac, WSTRES, XSTAGE, XST_TP, YRPLT, !Input
-     &    YRSOW, HARVFRAC, OZON7,                         !Input
+     &    YRSOW, HARVFRAC, OZON7, SDIF,                   !Input
      &    EMAT, FLOODN, PLANTS, RTWT,                     !I/O
      &    AGEFAC, APTNUP, BIOMAS, CANNAA, CANWAA, DYIELD, !Output
      &    GNUP, GPP, GPSM, GRAINN, GRNWT, GRORT,          !Output
